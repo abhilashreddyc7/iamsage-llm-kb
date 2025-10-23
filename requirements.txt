@@ -1,0 +1,14 @@
+# Core LLM Framework
+langchain
+
+# For local, free embeddings
+sentence-transformers
+
+# For local, free vector storage
+faiss-cpu
+
+# For the web user interface
+streamlit
+
+# For managing environment variables (e.g., API keys)
+python-dotenv
