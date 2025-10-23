@@ -3,9 +3,10 @@ from pathlib import Path
 import numpy as np
 import faiss
 from sentence_transformers import SentenceTransformer
+from src.config import PROJECT_ROOT
 
 # --- Configuration ---
-PROCESSED_DATA_PATH = Path("data/processed")
+PROCESSED_DATA_PATH = PROJECT_ROOT / "data" / "processed"
 FAISS_INDEX_PATH = PROCESSED_DATA_PATH / "vector_store.faiss"
 CHUNK_MAP_PATH = PROCESSED_DATA_PATH / "index_to_chunk_map.pkl"
 EMBEDDING_MODEL = 'multi-qa-MiniLM-L6-cos-v1'

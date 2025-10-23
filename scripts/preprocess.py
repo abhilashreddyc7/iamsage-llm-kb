@@ -2,12 +2,17 @@ import pickle
 from pathlib import Path
 import numpy as np
 import faiss
+import sys
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from src.config import PROJECT_ROOT
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
 
 # --- Configuration ---
-RAW_DATA_PATH = Path("data/raw")
-PROCESSED_DATA_PATH = Path("data/processed")
+RAW_DATA_PATH = PROJECT_ROOT / "data" / "raw"
+PROCESSED_DATA_PATH = PROJECT_ROOT / "data" / "processed"
+
 CHUNK_SIZE = 300
 CHUNK_OVERLAP = 30
 EMBEDDING_MODEL = 'multi-qa-MiniLM-L6-cos-v1'
