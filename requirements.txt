@@ -1,6 +1,7 @@
 # Core LLM Framework
 langchain
 langchain-google-genai
+langchain-text-splitters
 # OR for OpenAI, you would add:
 # langchain-openai
 
