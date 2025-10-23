@@ -11,18 +11,20 @@ PROCESSED_DATA_PATH = Path("data/processed")
 CHUNK_SIZE = 300
 CHUNK_OVERLAP = 30
 EMBEDDING_MODEL = 'all-MiniLM-L6-v2'
+FAISS_INDEX_PATH = PROCESSED_DATA_PATH / "vector_store.faiss"
+CHUNK_MAP_PATH = PROCESSED_DATA_PATH / "index_to_chunk_map.pkl"
 
 
-def preprocess_data():
+def create_vector_store():
     """
-    Loads raw data, chunks it, creates embeddings, builds a FAISS index,
-    and saves the index and chunk data to disk.
+    The main function that encapsulates the entire data processing pipeline.
+    It's designed to be called from other scripts.
     """
     print("Starting full data processing pipeline...")
 
     # --- (File loading, chunking, and embedding generation are unchanged) ---
     PROCESSED_DATA_PATH.mkdir(parents=True, exist_ok=True)
-    raw_files = list(RAW_DATA_PATH.glob("*[.md|.txt]"))
+    raw_files = list(RAW_DATA_PATH.glob("*[.md|.txt"))
     if not raw_files:
         print(f"No documents found in {RAW_DATA_PATH}. Aborting.")
         return
@@ -69,9 +71,8 @@ def preprocess_data():
     # --- Save the index and the chunk data separately ---
     
     # 1. Save the FAISS index
-    faiss_index_path = PROCESSED_DATA_PATH / "vector_store.faiss"
-    faiss.write_index(index, str(faiss_index_path))
-    print(f"FAISS index saved to: {faiss_index_path}")
+    faiss.write_index(index, str(FAISS_INDEX_PATH))
+    print(f"FAISS index saved to: {FAISS_INDEX_PATH}")
 
     # 2. Save the mapping from index ID to chunk content
     #    (We remove the bulky embeddings before saving the map)
@@ -83,13 +84,13 @@ def preprocess_data():
             "chunk_id": chunk["chunk_id"]
         })
         
-    map_path = PROCESSED_DATA_PATH / "index_to_chunk_map.pkl"
-    with open(map_path, "wb") as f:
+    with open(CHUNK_MAP_PATH, "wb") as f:
         pickle.dump(chunk_map, f)
-    print(f"Chunk map saved to: {map_path}")
+    print(f"Chunk map saved to: {CHUNK_MAP_PATH}")
 
+    print("Data processing pipeline complete.")
 
 
 if __name__ == "__main__":
-    preprocess_data()
+    create_vector_store()
 

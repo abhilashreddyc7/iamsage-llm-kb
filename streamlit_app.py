@@ -1,6 +1,9 @@
 import streamlit as st
-from retriever import DocumentRetriever
+from pathlib import Path
+
+from retriever import DocumentRetriever, FAISS_INDEX_PATH, CHUNK_MAP_PATH
 from llm_helper import create_rag_chain, generate_answer
+from scripts.preprocess import create_vector_store # IMPORT our new function
 
 # --- App Configuration ---
 st.set_page_config(
@@ -8,6 +11,14 @@ st.set_page_config(
     page_icon="🧠",
     layout="wide"
 )
+
+# --- NEW: First-run setup logic ---
+# Check if the vector store needs to be created
+if not FAISS_INDEX_PATH.exists() or not CHUNK_MAP_PATH.exists():
+    with st.spinner("Performing first-time setup: Creating vector store... This may take a minute."):
+        create_vector_store()
+    st.success("Setup complete! Your Sage is ready.")
+
 
 # --- Model Loading (Cached) ---
 @st.cache_resource

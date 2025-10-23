@@ -18,21 +18,34 @@ load_dotenv()
 
 def get_llm():
     """
-    Initializes and returns the appropriate LLM, checking for Streamlit secrets first.
+    Initializes and returns the appropriate LLM, gracefully handling both
+    local development (using .env) and Streamlit Cloud deployment (using st.secrets).
     """
     api_key = None
-    # Try to get the key from Streamlit's secrets manager first (for deployment)
-    if hasattr(st, 'secrets'):
-        api_key = st.secrets.get("GOOGLE_API_KEY")
+    
+    # --- Priority 1: Try to get the key from Streamlit's secrets manager ---
+    try:
+        # This will work in Streamlit Cloud, but raise an error locally if the file doesn't exist
+        if "GOOGLE_API_KEY" in st.secrets:
+            api_key = st.secrets["GOOGLE_API_KEY"]
+            # print("Loaded API key from Streamlit secrets.") # Optional: for debugging
+    except Exception:
+        # This block will be executed on local runs where secrets.toml doesn't exist
+        # We can safely ignore this error and proceed to the next method.
+        pass
 
-    # If not found, fall back to environment variable (for local development)
+    # --- Priority 2: Fall back to environment variable from .env file ---
     if not api_key:
         api_key = os.getenv("GOOGLE_API_KEY")
+        # print("Loaded API key from .env file.") # Optional: for debugging
 
+    # --- Final Check ---
     if not api_key:
-        raise ValueError("GOOGLE_API_KEY not found. Please set it in your .env file or Streamlit secrets.")
+        # If the key is still not found, we must stop the app.
+        st.error("GOOGLE_API_KEY not found. Please set it in your .env file locally, or in your Streamlit secrets for deployment.")
+        st.stop()
     
-    return ChatGoogleGenerativeAI(model="gemini-2.5-pro", google_api_key=api_key)
+    return ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=api_key)
 
 
 def create_rag_chain():
