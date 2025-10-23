@@ -1,5 +1,8 @@
 # Core LLM Framework
 langchain
+langchain-google-genai
+# OR for OpenAI, you would add:
+# langchain-openai
 
 # For local, free embeddings
 sentence-transformers
