@@ -8,8 +8,8 @@ from sentence_transformers import SentenceTransformer
 # --- Configuration ---
 RAW_DATA_PATH = Path("data/raw")
 PROCESSED_DATA_PATH = Path("data/processed")
-CHUNK_SIZE = 400
-CHUNK_OVERLAP = 50
+CHUNK_SIZE = 300
+CHUNK_OVERLAP = 30
 EMBEDDING_MODEL = 'all-MiniLM-L6-v2'
 
 
