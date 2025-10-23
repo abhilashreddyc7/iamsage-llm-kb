@@ -10,7 +10,7 @@ RAW_DATA_PATH = Path("data/raw")
 PROCESSED_DATA_PATH = Path("data/processed")
 CHUNK_SIZE = 300
 CHUNK_OVERLAP = 30
-EMBEDDING_MODEL = 'all-MiniLM-L6-v2'
+EMBEDDING_MODEL = 'multi-qa-MiniLM-L6-cos-v1'
 FAISS_INDEX_PATH = PROCESSED_DATA_PATH / "vector_store.faiss"
 CHUNK_MAP_PATH = PROCESSED_DATA_PATH / "index_to_chunk_map.pkl"
 

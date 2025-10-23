@@ -45,7 +45,7 @@ def get_llm():
         st.error("GOOGLE_API_KEY not found. Please set it in your .env file locally, or in your Streamlit secrets for deployment.")
         st.stop()
     
-    return ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=api_key)
+    return ChatGoogleGenerativeAI(model="gemini-2.5-pro", google_api_key=api_key)
 
 
 def create_rag_chain():

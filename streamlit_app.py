@@ -1,6 +1,7 @@
 import streamlit as st
 from pathlib import Path
-
+import pickle
+import faiss
 from retriever import DocumentRetriever, FAISS_INDEX_PATH, CHUNK_MAP_PATH
 from llm_helper import create_rag_chain, generate_answer
 from scripts.preprocess import create_vector_store # IMPORT our new function
@@ -24,23 +25,38 @@ if not FAISS_INDEX_PATH.exists() or not CHUNK_MAP_PATH.exists():
 @st.cache_resource
 def load_models():
     """
-    Loads the retriever and the RAG chain once and caches them.
+    Loads all necessary models and data from disk and injects them into the retriever.
+    This function is cached to run only once.
     """
-    print("Loading models...")
-    retriever = DocumentRetriever()
+    print("Loading models and data from disk...")
+    
+    # 1. Load the FAISS index
+    index = faiss.read_index(str(FAISS_INDEX_PATH))
+    
+    # 2. Load the chunk map
+    with open(CHUNK_MAP_PATH, "rb") as f:
+        chunk_map = pickle.load(f)
+        
+    # 3. Initialize the retriever with the loaded data
+    retriever = DocumentRetriever(index=index, chunk_map=chunk_map)
+    
+    # 4. Create the RAG chain
     rag_chain = create_rag_chain()
+    
+    print("Models and data loaded successfully.")
     return retriever, rag_chain
 
-# --- Main Application Logic ---
+
+# --- Main Application Logic (This part is correct and stays the same) ---
 st.title("IAMSage 🧠 - Your Interactive IAM Knowledge Base")
 st.write("Ask me anything about Identity and Access Management!")
 
-# Load the models using the cached function
 try:
     retriever, rag_chain = load_models()
 except Exception as e:
     st.error(f"Failed to load models. Please ensure your environment is set up correctly. Error: {e}")
     st.stop()
+
 
 # User input
 user_query = st.text_input("Enter your question:", "")

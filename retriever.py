@@ -8,22 +8,21 @@ from sentence_transformers import SentenceTransformer
 PROCESSED_DATA_PATH = Path("data/processed")
 FAISS_INDEX_PATH = PROCESSED_DATA_PATH / "vector_store.faiss"
 CHUNK_MAP_PATH = PROCESSED_DATA_PATH / "index_to_chunk_map.pkl"
-EMBEDDING_MODEL = 'all-MiniLM-L6-v2'
+EMBEDDING_MODEL = 'multi-qa-MiniLM-L6-cos-v1'
 
 class DocumentRetriever:
     """
-    Handles loading the vector store and performing similarity searches.
+    Handles similarity searches using a pre-loaded FAISS index and chunk map.
     """
-    def __init__(self, model_name=EMBEDDING_MODEL):
-        print("Initializing DocumentRetriever...")
+    def __init__(self, index, chunk_map, model_name=EMBEDDING_MODEL):
+        print("Initializing DocumentRetriever with pre-loaded data...")
         self.model = SentenceTransformer(model_name)
-        self.index = faiss.read_index(str(FAISS_INDEX_PATH))
-        with open(CHUNK_MAP_PATH, "rb") as f:
-            self.chunk_map = pickle.load(f)
+        self.index = index
+        self.chunk_map = chunk_map
         print("Initialization complete.")
 
     def search(self, query: str, top_k: int = 3) -> list:
-        """Searches for the most relevant document chunks for a given query."""
+        # ... (The search logic remains exactly the same) ...
         query_embedding = self.model.encode([query], convert_to_numpy=True).astype('float32')
         distances, indices = self.index.search(query_embedding, top_k)
         
@@ -32,6 +31,7 @@ class DocumentRetriever:
             if i != -1:
                 results.append(self.chunk_map[i])
         return results
+
 
 
 if __name__ == "__main__":
